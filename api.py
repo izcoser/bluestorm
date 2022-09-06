@@ -27,7 +27,8 @@ def check_auth(headers: dict) -> bool:
 
     h = hash(headers["token"])
     return (
-        len(conn.execute(f"SELECT * FROM auth WHERE token_hash = '{h}'").fetchall()) > 0
+        len(conn.execute(f"SELECT * FROM auth WHERE token_hash =?", (h,)).fetchall())
+        > 0
     )
 
 
