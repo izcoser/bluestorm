@@ -7,7 +7,7 @@ Implementação de API com autenticação para BlueStorm usando Python com o web
 Para rodar essa API localmente:
 
 ```
-git clone https://izcoser/bluestorm
+git clone https://github.com/izcoser/bluestorm
 cd bluestorm
 python -m pip install -r requirements.txt # Instala o Flask, a única dependência.
 python -m flask --app api run
