@@ -53,3 +53,7 @@ Os exemplos acima foram executados com a aplicação rodando via Docker. O ender
 Testes automatizados foram desenvolvidos usando o módulo nativo Python ```unittest```.
 
 Para rodar os testes, basta executar o comando ```python tests.py -v```.
+
+## Padrão de formatação de código
+
+Todos os arquivos Python seguem um padrão de formatação automática, de acordo com o software [Black](https://github.com/psf/black).
