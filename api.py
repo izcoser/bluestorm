@@ -1,6 +1,7 @@
 import json
 import sqlite3
 import string
+import hashlib
 from flask import Flask
 from flask import request
 from secrets import choice
@@ -18,14 +19,14 @@ conn = sqlite3.connect("backend_test.db", check_same_thread=False)
 cur = conn.cursor()
 
 app = Flask(__name__)
-app.config["JSONIFY_PRETTYPRINT_REGULAR"] = True
+app.json.compact = True
 
 # Verifica se o usuário passou o token corretamente nos headers do GET request.
 def check_auth(headers: dict) -> bool:
     if "token" not in headers:
         return False
 
-    h = hash(headers["token"])
+    h = hashlib.md5(headers["token"].encode("utf-8")).hexdigest()
     return (
         len(conn.execute(f"SELECT * FROM auth WHERE token_hash =?", (h,)).fetchall())
         > 0
@@ -34,13 +35,14 @@ def check_auth(headers: dict) -> bool:
 
 # Endpoint POST para criar um token e ter acesso aos dados.
 # O token de autenticação tem 15 caracteres alfanuméricos.
-# A hash do token é salva na tabela 'auth' do banco de dados.
+# A hash md5 do token é salva na tabela 'auth' do banco de dados.
 @app.post("/create_auth")
 def create_auth():
     cur.execute(queries["create_auth_table"])
     conn.commit()
     token = "".join([choice(string.ascii_uppercase + string.digits) for _ in range(15)])
-    cur.execute(f"INSERT INTO auth VALUES (NULL, {str(hash(token))})")
+    h = hashlib.md5(token.encode("utf-8")).hexdigest()
+    cur.execute(f"INSERT INTO auth VALUES (NULL, ?)", (h,))
     conn.commit()
     return {"token": token}
 
